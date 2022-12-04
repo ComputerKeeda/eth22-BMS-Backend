@@ -1,3 +1,4 @@
+require("dotenv").config();
 const Web3 = require("web3")
 const web3 = new Web3(
   new Web3.providers.HttpProvider("https://rpc-mumbai.maticvigil.com/")
@@ -64,7 +65,7 @@ const ABI = [
 const contractAddress = "0xf5D43bFdb315159248DaF85C1fc27Bf5f2767AA9";
 let contract = new web3.eth.Contract(ABI, contractAddress);
 web3.eth.accounts.wallet.add(
-  "cb006922162673d791b3e0cdaba6f13fda7c9860a0653c94a5b6c75b46772bf6"
+  process.env.PK
 );
 
 
