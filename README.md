@@ -1,7 +1,7 @@
 This is a the Backend Server of BMS Blockchain Main Service
 
 ## What is BMS
-So Basically BMS is a Truly Blockchain Based Email. BMS allows wallet address to exchange the mail between them.
+BMS is essentially a blockchain-based email, to put it simply. BMS enables mail exchange between wallet addresses.
 
 Any one with a MetaMask Wallet Can Currently Use This Application.
 
