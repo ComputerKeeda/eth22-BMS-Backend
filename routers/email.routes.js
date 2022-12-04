@@ -3,6 +3,6 @@ const mailController = require("../controllers/mail.controller");
 
 // web3 api's
 router.post("/sendMail", mailController.newMail); // done
-router.get("/getMail" , mailController.getMail); // done
+router.post("/getMail" , mailController.getMail); // done
 
 module.exports = router;

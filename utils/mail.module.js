@@ -76,7 +76,7 @@ const Mail = async (mailObj) => {
         mailObj.receiver, //receiver
         mailObj.mailSubject, // encrypt subhjec
         mailObj.mailBody, // encrpyt // body
-        mailObj.mailAttachment, // encrypt // attatchments
+        "0xdxcbnvjkbwerjk", // encrypt // attatchments
         mailObj.timestamp // timestamp
       )
       .send({

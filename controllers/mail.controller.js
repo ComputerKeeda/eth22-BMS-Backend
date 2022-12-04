@@ -1,6 +1,7 @@
 const mailModel = require("../models/mail.models");
 const mailService = require("../utils/mail.module");
 const enc = require("../utils/enc");
+const userModels = require("../models/user.models");
 
 const newMail = async (req, res) => {
   try {
@@ -10,7 +11,7 @@ const newMail = async (req, res) => {
     let receiver = body.receiver;
     let mailSubject = body.mailSubject;
     let mailBody = body.mailBody;
-    let mailAttachment = body.mailAttachment;
+    // let mailAttachment = body.mailAttachment;
     let timestamp = Date.now();
 
     let mailObject = {
@@ -18,7 +19,7 @@ const newMail = async (req, res) => {
       receiver: receiver,
       mailSubject: (await enc.encrypt(mailSubject.toString())).toString(),
       mailBody: (await enc.encrypt(mailBody.toString())).toString(),
-      mailAttachment: (await enc.encrypt(mailAttachment.toString())).toString(),
+      // mailAttachment: (await enc.encrypt(mailAttachment.toString())).toString(),
       timestamp: timestamp,
     };
 
@@ -38,7 +39,7 @@ const newMail = async (req, res) => {
         receiverAddress: mailObject.receiver,
         body: mailObject.mailBody,
         subject: mailObject.mailSubject,
-        attachment: mailObject.mailAttachment,
+        // attachment: mailObject.mailAttachment,
         transactionHash: mailing.txhash,
       });
 
@@ -57,6 +58,7 @@ const newMail = async (req, res) => {
           description: "Something went wrong",
         });
       }
+
     } else {
       res.status(500).json({
         success: false,
@@ -76,15 +78,16 @@ const newMail = async (req, res) => {
 };
 const getMail = async (req, res) => {
   try {
-    const headers = req.headers;
-    userWalletAddress = headers.userWalletAddress;
-
+    const body = req.body;
+    console.log(body);
+    let userWalletAddress = body.userWalletAddress;
+    let sendEmails = [];
     if (userWalletAddress === undefined) {
       res.status(500).json({
         success: false,
         status: 500,
-        message: "Username is not defined",
-        description: "Please provide a valid username",
+        message: "userWalletAddress is not defined",
+        description: "Please provide a valid userWalletAddress",
       });
       return false;
     }
@@ -94,12 +97,35 @@ const getMail = async (req, res) => {
     });
 
     if (getAllEmail) {
+      for (let i = 0; i < getAllEmail.length; i++) {
+        const element = getAllEmail[i];
+        let user = await userModels.findOne({
+          walletAddress: element.senderAddress,
+        });
+        if (user === null) {
+          user = {
+            username: "unknown",
+            ensAvatar : "null"
+          };
+        }
+        sendEmails[i] = {
+          senderUsername: user.username,
+          senderAvatar : user.ensAvatar,
+          senderAddress: element.senderAddress,
+          receiverAddress: element.receiverAddress,
+          body: (await enc.decrypt(element.body)).toString(),
+          subject: (await enc.decrypt(element.subject)).toString(),
+          // attachment: (await enc.decrypt(element.attachment)).toString(),
+          transactionHash: element.transactionHash,
+          timestamp : element.createdAt
+        };
+      }
       res.status(200).json({
         success: true,
         status: 200,
         message: "Success",
         description: "List(s) of emails",
-        data: getAllEmail,
+        data: sendEmails,
       });
       return true;
     } else {
@@ -122,5 +148,5 @@ const getMail = async (req, res) => {
 
 module.exports = {
   newMail,
-  getMail
+  getMail,
 };
